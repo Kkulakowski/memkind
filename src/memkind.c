@@ -49,7 +49,7 @@
 #include <memkind/internal/memkind_pmem.h>
 #include <memkind/internal/memkind_interleave.h>
 #include <memkind/internal/memkind_private.h>
-
+#include <memkind/internal/memkind_pinned.h>
 
 static struct memkind MEMKIND_DEFAULT_STATIC = {
     &MEMKIND_DEFAULT_OPS,
@@ -79,6 +79,14 @@ static struct memkind MEMKIND_HBW_STATIC = {
     &MEMKIND_HBW_OPS,
     MEMKIND_PARTITION_HBW,
     "memkind_hbw",
+    PTHREAD_ONCE_INIT,
+    0, NULL
+};
+
+static struct memkind MEMKIND_HBW_PINNED_STATIC = {
+    &MEMKIND_HBW_PINNED_OPS,
+    MEMKIND_PARTITION_HBW_PINNED,
+    "memkind_hbw_locked",
     PTHREAD_ONCE_INIT,
     0, NULL
 };
@@ -150,6 +158,7 @@ struct memkind *MEMKIND_HBW_GBTLB = &MEMKIND_HBW_GBTLB_STATIC;
 struct memkind *MEMKIND_HBW_PREFERRED_GBTLB = &MEMKIND_HBW_PREFERRED_GBTLB_STATIC;
 struct memkind *MEMKIND_GBTLB = &MEMKIND_GBTLB_STATIC;
 struct memkind *MEMKIND_HBW_INTERLEAVE = &MEMKIND_HBW_INTERLEAVE_STATIC;
+struct memkind *MEMKIND_HBW_PINNED = &MEMKIND_HBW_PINNED_STATIC;
 
 struct memkind_registry {
     struct memkind *partition_map[MEMKIND_MAX_KIND];
@@ -170,6 +179,7 @@ static struct memkind_registry memkind_registry_g = {
         [MEMKIND_PARTITION_GBTLB] = &MEMKIND_GBTLB_STATIC,
         [MEMKIND_PARTITION_HBW_INTERLEAVE] = &MEMKIND_HBW_INTERLEAVE_STATIC,
         [MEMKIND_PARTITION_INTERLEAVE] = &MEMKIND_INTERLEAVE_STATIC,
+        [MEMKIND_PARTITION_HBW_PINNED] = &MEMKIND_HBW_PINNED_STATIC,
     },
     MEMKIND_NUM_BASE_KIND,
     PTHREAD_MUTEX_INITIALIZER

@@ -62,7 +62,12 @@ typedef enum {
      *  Interleave pages accross high bandwidth nodes. If insufficient memory
      *  pages are available then OOM killer will be triggered.
      */
-    HBW_POLICY_INTERLEAVE = 3
+    HBW_POLICY_INTERLEAVE = 3,
+    /*
+     *  If insufficient high bandwidth physical memory pages are available then
+     *  OOM killer will be triggered.
+     */
+    HBW_POLICY_PINNED = 4
 } hbw_policy_t;
 
 /*

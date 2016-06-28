@@ -53,6 +53,7 @@ src/memkind_gbtlb.c
 src/memkind_hbw.c
 src/memkind_hugetlb.c
 src/memkind_interleave.c
+src/memkind_pinned.c
 src/memkind_pmem.c
 src/memkind-hbw-nodes.c
 include/hbwmalloc.h
@@ -66,6 +67,7 @@ include/memkind/internal/memkind_hugetlb.h
 include/memkind/internal/memkind_interleave.h
 include/memkind/internal/memkind_pmem.h
 include/memkind/internal/memkind_private.h
+include/memkind/internal/memkind_pinned.h
 test/Makefile.mk
 test/check.sh
 test/test.sh
@@ -314,4 +316,3 @@ jemalloc/test/unit/stats.c
 jemalloc/test/unit/tsd.c
 jemalloc/test/unit/util.c
 jemalloc/test/unit/zero.c
-

@@ -38,6 +38,7 @@ static inline memkind_t hbw_get_kind(int pagesize);
 static inline void hbw_policy_preferred_init(void);
 static inline void hbw_policy_bind_init(void);
 static inline void hbw_policy_interleave_init(void);
+static inline void hbw_policy_locked_init(void);
 
 hbw_policy_t hbw_get_policy(void)
 {
@@ -54,6 +55,9 @@ int hbw_set_policy(hbw_policy_t mode)
     }
     else if (mode == HBW_POLICY_INTERLEAVE) {
         pthread_once(&hbw_policy_once_g, hbw_policy_interleave_init);
+    }
+    else if (mode == HBW_POLICY_PINNED) {
+        pthread_once(&hbw_policy_once_g, hbw_policy_locked_init);
     }
     else {
         return EINVAL;
@@ -155,7 +159,7 @@ static inline memkind_t hbw_get_kind(int pagesize)
 
     int policy = hbw_get_policy();
 
-    if (policy == HBW_POLICY_BIND || policy == HBW_POLICY_INTERLEAVE) {
+    if (policy == HBW_POLICY_BIND || policy == HBW_POLICY_INTERLEAVE || policy == HBW_POLICY_PINNED) {
         switch (pagesize) {
             case HBW_PAGESIZE_2MB:
                 result = MEMKIND_HBW_HUGETLB;
@@ -167,6 +171,9 @@ static inline memkind_t hbw_get_kind(int pagesize)
             default:
                 if (policy == HBW_POLICY_BIND) {
                     result = MEMKIND_HBW;
+                }
+                else if (policy == HBW_POLICY_PINNED) {
+                    result = MEMKIND_HBW_PINNED;
                 }
                 else {
                     result = MEMKIND_HBW_INTERLEAVE;
@@ -219,4 +226,9 @@ static inline void hbw_policy_preferred_init(void)
 static inline void hbw_policy_interleave_init(void)
 {
     hbw_policy_g = HBW_POLICY_INTERLEAVE;
+}
+
+static inline void hbw_policy_locked_init(void)
+{
+    hbw_policy_g = HBW_POLICY_PINNED;
 }
